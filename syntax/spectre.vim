@@ -3,11 +3,11 @@ if exists("b:current_syntax")
 endif
 
 syn keyword spectreKeyword val some const static pub fn
-syn keyword spectreKeyword parallel overload single
+"syn keyword spectreKeyword parallel overload single
 "syn keyword spectreKeyword model enum union
 
 syn keyword spectreType ptrdiff untyped typed generic
-syn keyword spectreType bool char rchar byte void string
+syn keyword spectreType bool char rchar byte void string cstr
 syn keyword spectreType i8 i16 i32 i64 u8 u16 u32 u64 isize usize size
 syn keyword spectreType int uint long ulong
 syn keyword spectreType float f32 f64
@@ -22,11 +22,11 @@ syn match   spectreNew      '\v<(new|[m]?alloc|create)>'
 syn match   spectreFree     '\v<(free)>'
 
 syn keyword spectreRepeat while loop for in to
-syn keyword spectreStatement break continue return defer trust
+syn keyword spectreStatement break continue return defer
 syn keyword spectreConditional if else elif pre post match
-syn keyword spectreInclude export include extern when foreign opaque
+syn keyword spectreInclude export include extern when foreign opaque guarded
 
-syn keyword spectreException throw try catch cast unsafe raw
+syn keyword spectreException throw try catch cast unsafe raw trust
 syn keyword spectrePanic panic enforce
 "syn keyword spectreSuper   private
 
@@ -48,7 +48,8 @@ syn match spectreFunc       '\v[_]*\w+\ze((\[.*\])|((::)?\<.*\>))*\s*\('
 syn match spectreException  '\v(\W@<=[~&!*]+\ze[\(\[\{\<]*[-]?\w)|(\w@<=[*!?]+\ze\W)'
 "syn match spectreStruct     '\v((type|model|struct|enum|union)(\[.*\])?\s*)@<=[_]*\w+\ze(\[.*\])?\s*(\(|\{)'
 
-syn match spectreInclude    '\v^\s*use .*[^(]'
+syn match spectreInclude    '\v<(use)\ze\s*\('
+syn match spectreSMacro     '\v<(result|option)\ze\s*\['
 syn match spectreMacro      '\v^\s*\[.{-}\]'
 syn match spectreType       '\v<(str)\ze\s*\('
 syn match spectreSMacro     '\v<(reduce|deref|list)\ze\s*\('
