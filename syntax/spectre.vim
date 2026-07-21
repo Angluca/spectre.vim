@@ -2,7 +2,7 @@ if exists("b:current_syntax")
     finish
 endif
 
-syn keyword spectreKeyword val some const static pub fn
+syn keyword spectreKeyword val some const static pub fn spec
 "syn keyword spectreKeyword parallel overload single
 "syn keyword spectreKeyword model enum union
 
@@ -13,10 +13,10 @@ syn keyword spectreType int uint long ulong
 syn keyword spectreType float f32 f64
 
 syn keyword spectreSelf self
-syn keyword spectreLabel mut default ref as none
+syn keyword spectreLabel mut default ref deref as
 syn keyword spectreOperator and or is mod
-syn keyword spectreConstant true false null nil
-syn keyword spectreSComment assert println print
+syn keyword spectreConstant true false none
+syn keyword spectreSComment assert
 syn match   spectreSMacro   '\v<(put)>'
 syn match   spectreNew      '\v<(new|[m]?alloc|create)>'
 syn match   spectreFree     '\v<(free)>'
@@ -24,7 +24,7 @@ syn match   spectreFree     '\v<(free)>'
 syn keyword spectreRepeat while loop for in to
 syn keyword spectreStatement break continue return defer
 syn keyword spectreConditional if else elif pre post match
-syn keyword spectreInclude export include extern when foreign opaque guarded
+syn keyword spectreInclude export include link extern when foreign opaque guarded
 
 syn keyword spectreException throw try catch cast unsafe raw trust
 syn keyword spectrePanic panic enforce
@@ -55,6 +55,7 @@ syn match spectreType       '\v<(str)\ze\s*\('
 syn match spectreSMacro     '\v<(reduce|deref|list)\ze\s*\('
 syn match spectreLabel      '\v<(addr)\ze\s*\('
 syn match spectreAdded      '\v^\s*<(test)\ze\s*\{'
+syn match spectreSComment   '\v<\@(\w+)>'
 
 " -- shader
 "syn match   spectreKeyword  '\v<(uniform|instance|varying|var|vertex|fragment|in|out)>\s'
@@ -167,6 +168,7 @@ syn keyword spectreKeyword def nextgroup=spectreFunc skipwhite
 syn keyword spectreTodo contained TODO FIXME XXX NOTE
 syn region  spectreComment  start="/\*" end="\*/" contains=spectreTodo,@Spell
 syn match   spectreComment  "//.*$" contains=spectreTodo,@Spell
+syn match   spectreSymbol   "\\\\.*$"
 syn match   spectrePreProc  '\#.*$'
 
 let b:current_syntax = "spectre"
