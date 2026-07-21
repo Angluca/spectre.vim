@@ -7,12 +7,11 @@ syn keyword spectreKeyword val const static pub fn spec
 "syn keyword spectreKeyword model enum union
 
 syn keyword spectreType ptrdiff untyped typed generic
-syn keyword spectreType bool char rchar byte void string cstr
+syn keyword spectreType bool char rchar byte void string cstr self
 syn keyword spectreType i8 i16 i32 i64 u8 u16 u32 u64 isize usize size
 syn keyword spectreType int uint long ulong
 syn keyword spectreType float f32 f64
 
-syn keyword spectreSelf self
 syn keyword spectreLabel mut default ref deref as
 syn keyword spectreOperator and or is mod
 syn keyword spectreConstant true false none
