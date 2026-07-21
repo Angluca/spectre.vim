@@ -38,7 +38,7 @@ endf
 
 " Auto delete trailing white_space if save.
 if get(g:, 'spectre_save_cls', 1)
-  au BufWrite *.n call DeleteTrailingWS()
+  au BufWrite *.sx call DeleteTrailingWS()
 endif
 
 augroup spectre.vim

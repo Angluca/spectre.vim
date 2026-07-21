@@ -2,7 +2,7 @@ if exists("b:current_syntax")
     finish
 endif
 
-syn keyword spectreKeyword val some const static pub fn spec
+syn keyword spectreKeyword val const static pub fn spec
 "syn keyword spectreKeyword parallel overload single
 "syn keyword spectreKeyword model enum union
 
@@ -16,7 +16,7 @@ syn keyword spectreSelf self
 syn keyword spectreLabel mut default ref deref as
 syn keyword spectreOperator and or is mod
 syn keyword spectreConstant true false none
-syn keyword spectreSComment assert
+syn keyword spectreSComment assert some ok err
 syn match   spectreSMacro   '\v<(put)>'
 syn match   spectreNew      '\v<(new|[m]?alloc|create)>'
 syn match   spectreFree     '\v<(free)>'
