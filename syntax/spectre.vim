@@ -2,31 +2,30 @@ if exists("b:current_syntax")
     finish
 endif
 
-syn keyword spectreKeyword val some const static pub fn
-syn keyword spectreKeyword parallel overload single
+syn keyword spectreKeyword val const static pub fn spec
+"syn keyword spectreKeyword parallel overload single
 "syn keyword spectreKeyword model enum union
 
 syn keyword spectreType ptrdiff untyped typed generic
-syn keyword spectreType bool char rchar byte void string
+syn keyword spectreType bool char rchar byte void string cstr self
 syn keyword spectreType i8 i16 i32 i64 u8 u16 u32 u64 isize usize size
 syn keyword spectreType int uint long ulong
 syn keyword spectreType float f32 f64
 
-syn keyword spectreSelf self
-syn keyword spectreLabel mut default ref as none
+syn keyword spectreLabel mut default ref deref as
 syn keyword spectreOperator and or is mod
-syn keyword spectreConstant true false null nil
-syn keyword spectreSComment assert println print
+syn keyword spectreConstant true false none
+syn keyword spectreSComment assert some ok err
 syn match   spectreSMacro   '\v<(put)>'
 syn match   spectreNew      '\v<(new|[m]?alloc|create)>'
 syn match   spectreFree     '\v<(free)>'
 
 syn keyword spectreRepeat while loop for in to
-syn keyword spectreStatement break continue return defer trust
+syn keyword spectreStatement break continue return defer
 syn keyword spectreConditional if else elif pre post match
-syn keyword spectreInclude export include extern when foreign opaque
+syn keyword spectreInclude export include link extern when foreign opaque guarded
 
-syn keyword spectreException throw try catch cast unsafe raw
+syn keyword spectreException throw try catch cast unsafe raw trust
 syn keyword spectrePanic panic enforce
 "syn keyword spectreSuper   private
 
@@ -39,7 +38,7 @@ syn match spectreType       '\v\[@<=\s*\w+\ze(\[.*\])*\s*\*+\s*\]' " [type*]
 syn match spectreType       '\v<\w+_[tscemui]>'
 syn match spectreMacro      '\v<[_]*\u[A-Z0-9_]*>'
 syn match spectreType       '\v<[_]*\u[A-Z0-9_]*[a-z]+\w*>'
-"syn match spectreType       '\v\.?\zs<([iu][0-9]{1,3})?>'
+syn match spectreType       '\v\.?\zs<([iu][0-9]{1,3})?>'
 syn match spectreRepeat     '\v([^\.](\.|::|-\>))@<=\w\w*'
 syn match spectreType       '\v<\w+>\ze(::|\<(\w+\s*(\<.*\>|\[.*\])?\s*[,]?\s*)*\>)' "foo<T>()
 "syn match spectreFunc       '\v[_]*\l\w*\ze((\[.*\])|((::)?\<.*\>))*\s*\('
@@ -48,12 +47,22 @@ syn match spectreFunc       '\v[_]*\w+\ze((\[.*\])|((::)?\<.*\>))*\s*\('
 syn match spectreException  '\v(\W@<=[~&!*]+\ze[\(\[\{\<]*[-]?\w)|(\w@<=[*!?]+\ze\W)'
 "syn match spectreStruct     '\v((type|model|struct|enum|union)(\[.*\])?\s*)@<=[_]*\w+\ze(\[.*\])?\s*(\(|\{)'
 
-syn match spectreInclude    '\v^\s*use .*[^(]'
+syn match spectreInclude    '\v<(use)\ze\s*\('
+syn match spectreSMacro     '\v<(result|option)\ze\s*\['
 syn match spectreMacro      '\v^\s*\[.{-}\]'
 syn match spectreType       '\v<(str)\ze\s*\('
 syn match spectreSMacro     '\v<(reduce|deref|list)\ze\s*\('
 syn match spectreLabel      '\v<(addr)\ze\s*\('
 syn match spectreAdded      '\v^\s*<(test)\ze\s*\{'
+syn match spectreSComment   '\v<\@(\w+)>'
+
+syn match machConstant contained /\v[\<,\>]/
+syn region machConstantSpec
+    \ oneline
+    \ keepend
+    \ contains=machType,machOperator,machMacro,machSComment,machConstant,machConstantSpec
+    \ start=/\v\<\s*/
+    \ end=/\v\s*\>/
 
 " -- shader
 "syn match   spectreKeyword  '\v<(uniform|instance|varying|var|vertex|fragment|in|out)>\s'
@@ -67,7 +76,6 @@ syn match   spectreType     '\v<[dbui]?vec[234]>'
 syn match   spectreType     '\v<vec[234][dbfhui]?>'
 syn match   spectreType     '\v<mat[234](x[234]f)?>'
 syn match   spectreType     '\v<(vec|mat|list)\ze\['
-
 
 "hi def spectreSymbol ctermfg=DarkGray guifg=DarkGray
 hi def link spectreSMacro   SpecialComment
@@ -104,7 +112,7 @@ syn match spectreNumber "\v<0[xX][0-9a-fA-F_]+([iuIU]?[lL]?[0-9]{-,3})?>"
 syn match spectreNumber "\v<0[bB][01_]+([iuIU]?[lL]?[0-9]{-,3})?>"
 
 syn match spectreFloat  '\v<\.\d+([eE][+-]?\d+)?[fFdD]?>' display
-syn match spectreFloat  '\v<([0][1-9]*)([eE][+-]?\d+)?[fFdD]?>' display
+"syn match spectreFloat  '\v<([0][1-9]*)([eE][+-]?\d+)?[fFdD]?>' display
 syn match spectreFloat  '\v<0x\x+(\.\x+)?[pP][+-]?\d+[fFdD]?>' display
 
 " Integer literals
@@ -128,7 +136,8 @@ syn match spectreFormat '{{\|}}' contained display
 
 hi def link spectrePreProc               PreProc
 hi def link spectreSuper                 Title
-hi def link spectreFloat                 Constant
+"hi def link spectreFloat                 Constant
+hi def link spectreFloat                 Underlined
 hi def link spectreInteger               Number
 hi def link spectreEscape                SpecialComment
 hi def link spectreFormat                SpecialChar
@@ -155,17 +164,18 @@ hi def link spectreSpecialChar           SpecialChar
 hi def link spectreException             Exception
 hi def link spectrePanic                 Exception
 
-syn match   spectreTypedef  contains=spectreTypedef "\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*" display contained
-syn match   spectreFunc     "\%(r#\)\=\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*" display contained
+syn match   spectreTypedef "\h\w*" display contained
+syn match   spectreFunc "\h\w*" display contained
 "syn keyword spectreKeyword union struct model enum type nextgroup=spectreTypedef skipwhite skipempty
 syn keyword spectreKeyword union struct model enum type nextgroup=spectreTypedef skipwhite 
 "syn keyword spectreKeyword union nextgroup=spectreTypedef skipwhite skipempty contained
 syn keyword spectreMacro platform macro nextgroup=spectreTypedef skipwhite skipempty
-syn keyword spectreKeyword def nextgroup=spectreFunc skipwhite
+syn keyword spectreKeyword fn nextgroup=spectreFunc skipwhite
 " adapted from neovim runtime/syntax
 syn keyword spectreTodo contained TODO FIXME XXX NOTE
 syn region  spectreComment  start="/\*" end="\*/" contains=spectreTodo,@Spell
 syn match   spectreComment  "//.*$" contains=spectreTodo,@Spell
+syn match   spectreSymbol   "\\\\.*$"
 syn match   spectrePreProc  '\#.*$'
 
 let b:current_syntax = "spectre"
