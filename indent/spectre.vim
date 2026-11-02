@@ -42,14 +42,13 @@ function! GetSpectreIndent(lnum)
     let currentLineNum = a:lnum
     let currentLine = getline(a:lnum)
 
-    " cindent doesn't handle multi-line strings properly, so force no indent
-    if currentLine =~ '^\s*\\\\.*'
-        return -1
-    endif
-
     let prevLineNum = prevnonblank(a:lnum-1)
     let prevLine = getline(prevLineNum)
     let sw = shiftwidth()
+
+    if prevLine =~ '\v\\\\'
+        return match(prevLine, '\\\\')
+    endif
 
     if currentLine =~ '\v^\s*[)\]}]+\s*(\/\/.*)?$'
         return indent(currentLineNum)
