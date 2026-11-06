@@ -8,7 +8,7 @@ syn keyword spectreKeyword mut as
 "syn keyword spectreKeyword model enum union
 
 syn keyword spectreType ptrdiff untyped typed generic
-syn keyword spectreType bool char byte void string cstr self
+syn keyword spectreType bool char byte void string self
 syn keyword spectreType i8 i16 i32 i64 u8 u16 u32 u64 isize usize
 syn keyword spectreType int uint long ulong
 syn keyword spectreType float f32 f64
@@ -25,7 +25,7 @@ syn keyword spectreRepeat while loop for in to
 syn keyword spectreStatement break continue return defer
 syn keyword spectreConditional if else elif match
 syn keyword spectreConditional pre post invariant
-syn keyword spectreInclude export include extern when foreign opaque guarded
+syn keyword spectreInclude export include extern foreign opaque guarded
 
 syn keyword spectreException throw try catch cast unsafe raw trust
 syn keyword spectrePanic panic enforce
@@ -52,11 +52,12 @@ syn match spectreType       '\v\(@<=\s*\w+\ze(\[.*\])*\s*\*+\s*\)' " (type*)
 syn match spectreType       '\v\[@<=\s*\w+\ze(\[.*\])*\s*\*+\s*\]' " [type*]
 syn match spectreType       '\v<\w+_[tscemui]>'
 syn match spectreRepeat     '\v([^\.](\.|::|-\>))@<=\w\w*'
-syn match spectreMacro      '\v<[_]*\u[A-Z0-9_]*>'
-syn match spectreType       '\v<[_]*\u[A-Z0-9_]*[a-z]+\w*>'
+syn match spectreMacro      '\v<[_]*\u+[A-Z0-9_]*>'
+syn match spectreType       '\v<[_]*\u([A-Z0-9_]*[a-z]+\w*)*>'
+syn match spectreMacro      '\v<[_]*\u+[A-Z0-9]_[A-Zx0-9_]+>'
 syn match spectreType       '\v\.?\zs<([iu][0-9]{1,3})?>'
 "syn match spectreType       '\v<\w+>\ze(::|\<(\w+\s*(\<.*\>|\[.*\])?\s*[,]?\s*)*\>)' "foo<T>()
-syn match spectreFunc       '\v\w+\ze((\[[^=;]*\])|((::)?\<.*\>))*\s*\('
+syn match spectreFunc       '\v\l\w+\ze((\[[^=;]*\])|((::)?\<.*\>))*\s*\('
 syn match spectreException  '\v(\W@<=[~&!*^]+\ze[\(\[\{\<]*[-]?\w)|(\w@<=[!?]+\ze\W)'
 syn match spectreType       '\v(::)@<=\w\w*'
 syn match spectreLabel      '\v(\-\>)|(::)'
@@ -71,13 +72,14 @@ syn match spectreSMacro     '\v<(list)\ze\s*\('
 syn match spectreAdded      '\v^\s*<(test)\ze\s*\{'
 syn match spectreInclude    '\v^\s*<(link|lib)>'
 syn match spectreSComment   '\v<\@(\w+)>'
+syn match spectreRepeat     '\v<\w+\ze\s*\=\s*use\s*\('
 
 syn match spectreConstant contained /\v[<>]/
 syn region spectreConstantSpec
     \ oneline
     \ keepend
     \ contains=spectreType,spectreOperator,spectreMacro,spectreSComment,spectreConstant,spectreConstantSpec,spectreSymbol
-    \ start=/\v\<%(%(%(\&\&|\|\|)@!.){-}\>)@=/
+    \ start=/\v\<%(%(%(\&\&|\|\||\(|\{|\"|\')@!.){-}\>)@=/
     \ end=/\v\>/
 
 "hi def spectreSymbol ctermfg=DarkGray guifg=DarkGray
@@ -167,17 +169,28 @@ hi def link spectreSpecialChar           SpecialChar
 hi def link spectreException             Exception
 hi def link spectrePanic                 Exception
 
+" 结构类型的颜色
 syn match spectreTypedef "\h\w*" display contained
-" 不修改括号内的颜色"
 syn match spectreParenParams "\v\([^)]*\)" contained transparent
     \ nextgroup=spectreTypedef skipwhite
-
 syn keyword spectreKeyword union struct model enum type spec
     \ nextgroup=spectreParenParams,spectreTypedef skipwhite
-syn keyword spectreMacro platform macro nextgroup=spectreTypedef skipwhite skipempty
+syn keyword spectreMacro when nextgroup=spectreTypedef skipwhite
+
+" union结构范围颜色
+"hi def link spectreRegionKeyword Keyword
+"syn keyword spectreRegionKeyword union contained
+"syn match spectreRepeat "\v\(@<!\w+\ze\s*\(" display contained
+"syn match spectreSymbol "\v\(@<!\h\w*\ze\s*\=\s*\{" display contained
+"syn region spectreUnionDef
+    "\ start="\v<union>[^{]*\{"
+    "\ end="\v\}"
+    "\ contains=spectreMacro,spectreParenParams,spectreType,spectreOperator,spectreConstant,spectreLabel,spectreKeyword,spectreSymbol,spectreRegionKeyword,spectreRepeat
+    "\ keepend
+
 syn match   spectreFunc "\h\w*" display contained
 syn keyword spectreKeyword fn nextgroup=spectreFunc skipwhite
-" adapted from neovim runtime/syntax
+
 syn keyword spectreTodo contained TODO FIXME XXX NOTE
 syn region  spectreComment  start="/\*" end="\*/" contains=spectreTodo,@Spell
 syn match   spectreComment  "//.*$" contains=spectreTodo,@Spell
