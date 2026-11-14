@@ -46,7 +46,8 @@ syn match   spectreType     '\v<(vec|mat|list)\ze\['
 
 syn match spectrePreProc    '[@]'
 syn match spectreSymbol     '[,;:\.]'
-syn match spectreOperator   '[\+\-\%=\/\^\&\*!?><\$|~]'
+syn match spectreException  '[?]'
+syn match spectreOperator   '[\+\-\%=\/\^\&\*!><\$|~]'
 syn match spectreConstant   '[{}\[\]()]'
 syn match spectreType       '\v\(@<=\s*\w+\ze(\[.*\])*\s*\*+\s*\)' " (type*)
 syn match spectreType       '\v\[@<=\s*\w+\ze(\[.*\])*\s*\*+\s*\]' " [type*]
@@ -58,7 +59,10 @@ syn match spectreMacro      '\v<[_]*\u+[A-Z0-9]_[A-Zx0-9_]+>'
 syn match spectreType       '\v\.?\zs<([iu][0-9]{1,3})?>'
 "syn match spectreType       '\v<\w+>\ze(::|\<(\w+\s*(\<.*\>|\[.*\])?\s*[,]?\s*)*\>)' "foo<T>()
 syn match spectreFunc       '\v\l\w+\ze((\[[^=;]*\])|((::)?\<.*\>))*\s*\('
-syn match spectreException  '\v(\W@<=[~&!*^]+\ze[\(\[\{\<]*[-]?\w)|(\w@<=[!?]+\ze\W)'
+"syn match spectreException  '\v(\W@<=[~&!*^]+\ze[\(\[\{\<]*[-]?\w)|(\w@<=[!?]+)'
+syn match spectreException  '\v[~&!*^]+\ze[\(\[\{]*\s*[-]?\h\w*>'
+"syn match spectreException  '\v<\h\w*>[\)\]]*\zs[?]+'
+
 syn match spectreType       '\v(::)@<=\w\w*'
 syn match spectreLabel      '\v(\-\>)|(::)'
 syn match spectreType       '\v<[uif]\d+(x\d+)+>' "f64x6
